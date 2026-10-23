@@ -20,6 +20,22 @@
         python = pkgs.python3.override {
           self = python;
           packageOverrides = pyfinal: pyprev: {
+            # nixpkgs is behind; RateLimitExceededExceedsMaxWait needs >= 2.10
+            pygithub = pyprev.pygithub.overridePythonAttrs (old: rec {
+              pname = "pygithub";
+              version = "2.10.0";
+              format = "wheel";
+              pyproject = null;
+              src = pyfinal.fetchPypi {
+                inherit pname version format;
+                dist = "py3";
+                python = "py3";
+                hash = "sha256-GSraKnbkr8fWs35QDJv+uhcx5lBml0RaW6HEr4vwuSQ=";
+              };
+              build-system = [ ];
+              doCheck = false;
+            });
+
             # not packaged in nixpkgs
             type-lens = pyfinal.buildPythonPackage rec {
               pname = "type_lens";
